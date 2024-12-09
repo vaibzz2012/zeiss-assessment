@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TestZeiss\ZeissAssessment.csproj" />
+    <ProjectReference Include="..\ZeissAssessment\ZeissAssessment.csproj" />
   </ItemGroup>
 
   <ItemGroup>

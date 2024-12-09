@@ -1,16 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Linq;
 using ZeissAssessment;
-using Xunit;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ZeissAssessmentTest
-
+namespace TestProject1
 {
-   
     public class ProductRepositoryTests
     {
         private readonly ProductDbContext _context;
@@ -19,9 +13,9 @@ namespace ZeissAssessmentTest
         public ProductRepositoryTests()
         {
             var options = new DbContextOptionsBuilder<ProductDbContext>()
-                .UseSqlServer()
+                .UseSqlServer("Server=ATHARV;Database=TestDb;Trusted_Connection=True;TrustServerCertificate=True;")
                 .Options;
-
+           
             _context = new ProductDbContext(options);
 
             var mockLogger = new Mock<ILogger<ProductRepository>>();
@@ -40,9 +34,9 @@ namespace ZeissAssessmentTest
 
             var addedProduct = _repository.AddProduct(product);
 
-            Assert.IsNotNull(addedProduct);
-            Assert.AreEqual(product.Name, addedProduct.Name);
-            Assert.AreEqual(product.AvailableQuantity, addedProduct.AvailableQuantity);
+            Assert.NotNull(addedProduct);
+            Assert.Equal(product.Name, addedProduct.Name);
+            Assert.Equal(product.AvailableQuantity, addedProduct.AvailableQuantity);
         }
 
         [Fact]
@@ -58,8 +52,8 @@ namespace ZeissAssessmentTest
             var addedProduct = _repository.AddProduct(product);
             var retrievedProduct = _repository.GetProductById(addedProduct.Id);
 
-            Assert.IsNotNull(retrievedProduct);
-            Assert.Equals(addedProduct.Id, retrievedProduct.Id);
+            Assert.NotNull(retrievedProduct);
+            Assert.Equal(addedProduct.Id, retrievedProduct.Id);
         }
 
         [Fact]
@@ -75,10 +69,10 @@ namespace ZeissAssessmentTest
             var addedProduct = _repository.AddProduct(product);
             var result = _repository.UpdateStock(addedProduct.Id, 5, true, out var errorMessage);
 
-            Assert.IsTrue(result);
-            Assert.IsNull(errorMessage);
+            Assert.True(result);
+            Assert.Null(errorMessage);
             var updatedProduct = _repository.GetProductById(addedProduct.Id);
-            Assert.Equals(5, updatedProduct.AvailableQuantity);
+            Assert.Equal(5, updatedProduct.AvailableQuantity);
         }
 
         [Fact]
@@ -94,9 +88,9 @@ namespace ZeissAssessmentTest
             var addedProduct = _repository.AddProduct(product);
             var result = _repository.UpdateStock(addedProduct.Id, 5, true, out var errorMessage);
 
-            Assert.IsFalse(result);
-            Assert.IsNotNull(errorMessage);
-            Assert.Equals("Insufficient stock", errorMessage);
+            Assert.False(result);
+            Assert.NotNull(errorMessage);
+            Assert.Equal("Insufficient stock available.", errorMessage);
         }
 
         [Fact]
@@ -113,7 +107,7 @@ namespace ZeissAssessmentTest
             _repository.DeleteProduct(addedProduct.Id);
 
             var deletedProduct = _repository.GetProductById(addedProduct.Id);
-            Assert.IsNull(deletedProduct);
+            Assert.Null(deletedProduct);
         }
     }
 }
